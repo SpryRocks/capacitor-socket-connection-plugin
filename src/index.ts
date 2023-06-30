@@ -1,10 +1,11 @@
-import { registerPlugin } from '@capacitor/core';
+import {ISocketConnectionPlugin, SocketConnectionPlugin} from './plugin';
+import {registerPlugin} from '@capacitor/core';
 
-import type { CapacitorSocketConnectionPluginPlugin } from './definitions';
+import type {ICapacitorSocketConnectionDefinitions} from './definitions';
 
-const CapacitorSocketConnectionPlugin = registerPlugin<CapacitorSocketConnectionPluginPlugin>('CapacitorSocketConnectionPlugin', {
-  web: () => import('./web').then(m => new m.CapacitorSocketConnectionPluginWeb()),
-});
+const wrapper = registerPlugin<ICapacitorSocketConnectionDefinitions>(
+  'CapacitorSocketConnectionPlugin',
+);
+const plugin: ISocketConnectionPlugin = new SocketConnectionPlugin(wrapper);
 
-export * from './definitions';
-export { CapacitorSocketConnectionPlugin };
+export {plugin as CapacitorSocketConnectionPlugin};

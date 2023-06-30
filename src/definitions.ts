@@ -1,3 +1,3 @@
-export interface CapacitorSocketConnectionPluginPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
+export interface ICapacitorSocketConnectionDefinitions {
+  echo(options: {value: string}): Promise<{value: string}>;
 }
