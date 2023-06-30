@@ -46,7 +46,7 @@ class Socket {
     private func setupReceive() {
         connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [self] (data, _, isComplete, error) in
             if let data = data, !data.isEmpty {
-                onDataReceived(data)
+                onData(data)
             }
             if let error = error {
                 onError(error)
@@ -58,7 +58,7 @@ class Socket {
         }
     }
     
-    private func onDataReceived(_ data: Data) {
+    private func onData(_ data: Data) {
         let bytes = data.map { $0 }
         delegate.onData(socket: self, data: bytes)
     }
@@ -93,7 +93,6 @@ class Socket {
     private static func createConnection(_ options: SocketOptions) -> NWConnection {
         let host = NWEndpoint.Host(options.host)
         let port = NWEndpoint.Port(rawValue: UInt16(options.port))!
-        let connection = NWConnection(host: host, port: port, using: .tcp)
-        return connection
+        return NWConnection(host: host, port: port, using: .tcp)
     }
 }

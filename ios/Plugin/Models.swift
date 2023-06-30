@@ -29,7 +29,7 @@ struct OnDataEvent {
     let data: SocketData
 }
 
-struct OnCloseEcent {
+struct OnCloseEvent {
     let socketUuid: SocketUuid
 }
 

@@ -70,12 +70,12 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     
     func onData(socket: Socket, data: SocketData) {
         let event = OnDataEvent(socketUuid: socket.uuid, data: data)
-        sendEvent(PluginEvents.OnData, data: mappers.mapDataReceivedEventToJson(event))
+        sendEvent(PluginEvents.OnData, data: mappers.mapOnDataEventToJson(event))
     }
     
     func onClose(socket: Socket) {
         removeSocket(socket)
-        let event = OnCloseEcent(socketUuid: socket.uuid)
+        let event = OnCloseEvent(socketUuid: socket.uuid)
         sendEvent(PluginEvents.OnClose, data: mappers.mapOnCloseEventToJson(event))
     }
     
@@ -87,10 +87,6 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     
     private func removeSocket(_ socket: Socket) {
         socketsMap.removeValue(forKey: socket.uuid)
-    }
-    
-    private func sendEvent(_ event: PluginEvents, data: JSObject = [:]) {
-        notifyListeners(event.rawValue, data: data)
     }
     
     private func findSocketByLink(_ link: NativeLink) throws -> Socket {
@@ -106,5 +102,9 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     
     private func error(_ call: CAPPluginCall, _ error: Error) {
         call.reject(error.localizedDescription)
+    }
+    
+    private func sendEvent(_ event: PluginEvents, data: JSObject) {
+        notifyListeners(event.rawValue, data: data)
     }
 }

@@ -8,7 +8,7 @@ public class Mappers {
     }
     
     func mapConnectionResultToJson(_ result: OpenConnectionResult) -> JSObject {
-        return ["link": mapNativeLinkToJson(result.link)];
+        return ["link": mapNativeLinkToJson(result.link)]
     }
     
     func mapCloseConnectionOptionsFromCall(_ call: CAPPluginCall) -> CloseConnectionOptions {
@@ -22,19 +22,19 @@ public class Mappers {
         return SendDataOptions(link: link, data: data)
     }
     
-    private func mapNativeLinkToJson(_ nativeLink: NativeLink) -> JSObject {
-        return ["uuid": nativeLink.uuid]
+    private func mapNativeLinkToJson(_ link: NativeLink) -> JSObject {
+        return ["uuid": link.uuid]
     }
     
-    private func mapNativeLinkFromJson(_ linkObj: JSObject) -> NativeLink {
-        return NativeLink(uuid: linkObj["uuid"] as! String)
+    private func mapNativeLinkFromJson(_ link: JSObject) -> NativeLink {
+        return NativeLink(uuid: link["uuid"] as! String)
     }
     
-    func mapDataReceivedEventToJson(_ event: OnDataEvent) -> JSObject {
+    func mapOnDataEventToJson(_ event: OnDataEvent) -> JSObject {
         return ["data": event.data, "socketUuid": event.socketUuid]
     }
     
-    func mapOnCloseEventToJson(_ event: OnCloseEcent) -> JSObject {
+    func mapOnCloseEventToJson(_ event: OnCloseEvent) -> JSObject {
         return ["socketUuid": event.socketUuid]
     }
     
