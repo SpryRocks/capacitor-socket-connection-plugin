@@ -1,4 +1,7 @@
+/* eslint-disable no-console */
 import {
+  BaseEvent,
+  ByteArray,
   NativeLink,
   NativePlugin,
   OnCloseEvent,
@@ -15,12 +18,7 @@ import {
 } from './types';
 import {SocketConnectionError} from './error';
 
-type State =
-  | 'notConnected'
-  | 'connecting'
-  | 'connected'
-  | 'disconnecting'
-  | 'disconnected';
+type State = 'initial' | 'opening' | 'opened' | 'closing' | 'closed' | 'error';
 
 export interface ISocket {
   onData: OnSocketData | undefined;
@@ -37,13 +35,15 @@ export interface ISocket {
 }
 
 export class Socket implements ISocket {
+  private static readonly TAG = 'SocketConnectionPlugin';
+
   onData: OnSocketData | undefined;
 
   onClose: OnSocketClose | undefined;
 
   onError: OnSocketError | undefined;
 
-  private _state: State = 'notConnected';
+  private _state: State = 'initial';
 
   private _link: NativeLink | undefined;
 
@@ -53,55 +53,66 @@ export class Socket implements ISocket {
   }
 
   async open(host: string, port: number) {
-    this.state = 'connecting';
-    const {link} = await NativePlugin.openConnection({host, port});
-    this._link = link;
-    this.state = 'connected';
+    this.checkStateOrThrow('initial', `You can call "open" method only once`);
+    this.onOpeningInternal();
+    let close: boolean;
+    try {
+      const {link} = await NativePlugin.openConnection({host, port});
+      close = this.checkState('closing');
+      this.onOpenedInternal(link);
+    } catch (error) {
+      this.onErrorInternal(error);
+      throw error;
+    }
+
+    if (close) {
+      this.closeInternal().catch();
+    }
   }
 
   async write(data: SocketData) {
-    const state = this.state;
-    if (state !== 'connected') {
-      throw new SocketConnectionError('Not supported state: ' + state);
-    }
+    this.checkStateOrThrow('opened', `Not supported state: ${this.state}`);
     return NativePlugin.sendData({link: this.link, data: Array.from(data)});
   }
 
   private onDataEventReceived(event: OnDataEvent) {
     console.log('Socket', 'onDataEventReceived', {event});
-    const state = this.state;
-    if (state !== 'connected') return;
-    if (event.socketUuid !== this.link.uuid) return;
-    if (!this.onData) return;
-    this.onData(new Uint8Array(event.data));
+    if (!this.checkEventUuid(event)) return;
+    this.onDataInternal(event.data);
   }
 
   private onCloseEventReceived(event: OnCloseEvent) {
     console.log('Socket', 'onCloseEventReceived', {event});
-    const state = this.state;
-    if (state !== 'connected') return;
-    if (event.socketUuid !== this.link.uuid) return;
-    if (!this.onClose) return;
-    this.onClose();
+    if (!this.checkEventUuid(event)) return;
+    this.onClosedInternal();
   }
 
   private onErrorEventReceived(event: OnErrorEvent) {
     console.log('Socket', 'onErrorEventReceived', {event});
-    const state = this.state;
-    if (state !== 'connected') return;
-    if (event.socketUuid !== this.link.uuid) return;
-    if (!this.onError) return;
-    this.onError(new SocketConnectionError('Connection error'));
+    if (!this.checkEventUuid(event)) return;
+    this.onErrorInternal(new SocketConnectionError('Connection error'));
   }
 
   async close() {
-    const state = this.state;
-    if (state === 'connected') {
-      this.state = 'disconnecting';
+    if (this.checkState('initial')) {
+      this.onClosedInternal();
+      return;
+    }
+    if (this.checkState('opening')) {
+      this.onClosingInternal();
+      return;
+    }
+    if (this.checkState('opened')) {
+      await this.closeInternal();
+      return;
+    }
+  }
+
+  private async closeInternal() {
+    if (this.checkState('opened')) {
+      this.onClosingInternal();
       await NativePlugin.closeConnection({link: this.link});
-      this.state = 'disconnected';
-    } else {
-      throw new SocketConnectionError('Not supported state: ' + state);
+      this.onClosedInternal();
     }
   }
 
@@ -109,14 +120,64 @@ export class Socket implements ISocket {
     return this._state;
   }
 
-  private set state(value: State) {
-    this._state = value;
-    console.log('Socket', 'newState', value);
+  private set state(newState: State) {
+    const oldState = this._state;
+    console.log(Socket.TAG, 'set state', {oldState, newState});
+    this._state = newState;
   }
 
   private get link() {
     if (!this._link) throw new SocketConnectionError('PluginLink is undefined');
     return this._link;
+  }
+
+  private onOpeningInternal() {
+    this.state = 'opening';
+  }
+
+  private onOpenedInternal(link: NativeLink) {
+    this._link = link;
+    this.state = 'opened';
+  }
+
+  private onDataInternal(bytes: ByteArray) {
+    if (!this.checkState('opened')) return;
+    const data = new Uint8Array(bytes);
+    if (this.onData) this.onData(data);
+  }
+
+  private onErrorInternal(error: unknown) {
+    if (this.checkState('error')) return;
+    if (this.checkState('closed')) return;
+    if (this.checkState('closing')) {
+      this.onClosedInternal();
+      return;
+    }
+    this.state = 'error';
+    if (this.onError) this.onError(error);
+  }
+
+  private onClosingInternal() {
+    this.state = 'closing';
+  }
+
+  private onClosedInternal() {
+    if (this.checkState('closed')) return;
+    if (this.checkState('error')) return;
+    this.state = 'closed';
+    if (this.onClose) this.onClose();
+  }
+
+  private checkState(...states: State[]) {
+    return states.includes(this.state);
+  }
+
+  private checkEventUuid(event: BaseEvent) {
+    return event.socketUuid === this.link.uuid;
+  }
+
+  private checkStateOrThrow(state: State, errorMessage: string) {
+    if (!this.checkState(state)) throw new SocketConnectionError(errorMessage);
   }
 
   private setupListeners() {
