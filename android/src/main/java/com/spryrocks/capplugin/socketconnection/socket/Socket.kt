@@ -18,7 +18,10 @@ class Socket(
 
     private val connection = createConnection(options)
 
-    suspend fun connect() {
+    private val _stateLock = Object()
+    private var state: SocketState = SocketState.Initial
+
+    suspend fun open() {
         suspendCoroutine {
             executor.execute {
                 try {
@@ -27,14 +30,21 @@ class Socket(
                     connection.connect(InetSocketAddress(host, port))
                     setupReceive()
                     it.resume(Unit)
+                    synchronized(_stateLock) {
+                        state = SocketState.Opened
+                    }
                 } catch (error: Throwable) {
                     it.resumeWithException(error)
+                    synchronized(_stateLock) {
+                        state = SocketState.Error
+                    }
+                    disposeInternal()
                 }
             }
         }
     }
 
-    suspend fun disconnect() {
+    suspend fun close() {
         suspendCoroutine {
             executor.execute {
                 try {
@@ -42,6 +52,10 @@ class Socket(
                     it.resume(Unit)
                 } catch (error: Throwable) {
                     it.resumeWithException(error)
+                } finally {
+                    synchronized(_stateLock) {
+                        state = SocketState.Closed
+                    }
                 }
             }
         }
@@ -82,11 +96,36 @@ class Socket(
     }
 
     private fun onClose() {
+        synchronized(_stateLock) {
+            if (state == SocketState.Closed) return
+            if (state == SocketState.Error) return
+        }
         delegate.onClose(this)
+        synchronized(_stateLock) {
+            state = SocketState.Closed
+        }
+        disposeInternal()
     }
 
     private fun onError(error: Throwable) {
+        synchronized(_stateLock) {
+            if (state == SocketState.Closed) return
+            if (state == SocketState.Error) return
+        }
         delegate.onError(this, error)
+        synchronized(_stateLock) {
+            state = SocketState.Error
+        }
+        disposeInternal()
+    }
+
+    private fun disposeInternal() {
+        executor.execute {
+            try {
+                connection.close()
+            } catch (ignored: Throwable) {
+            }
+        }
     }
 
     private val executor get() = delegate.executor
@@ -95,7 +134,6 @@ class Socket(
         private fun createConnection(options: SocketOptions): Socket {
             return JavaSocket().apply {
                 soTimeout = 0
-//                tcpNoDelay = true
             }
         }
     }

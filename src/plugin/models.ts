@@ -16,9 +16,11 @@ export enum PluginEvents {
   OnError = 'OnError',
 }
 
+export type ErrorObject = {message: string};
+
 export type Byte = number;
 export type ByteArray = Array<Byte>;
 export type BaseEvent = {socketUuid: SocketUuid};
 export type OnDataEvent = BaseEvent & {data: ByteArray};
 export type OnCloseEvent = BaseEvent;
-export type OnErrorEvent = BaseEvent;
+export type OnErrorEvent = BaseEvent & {error: ErrorObject};

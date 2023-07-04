@@ -19,7 +19,7 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
                 let socket = Socket(uuid: link.uuid, options: socketOptions, delegate: self)
                 socketsMap[link.uuid] = socket
                 
-                try await socket.connect()
+                try await socket.open()
                 
                 let result = OpenConnectionResult(link: link)
                 self.success(call, mappers.mapConnectionResultToJson(result))
@@ -82,7 +82,7 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     func onError(socket: Socket, error: Error) {
         removeSocket(socket)
         let event = OnErrorEvent(socketUuid: socket.uuid, error: error)
-        sendEvent(PluginEvents.OnError, data: mappers.mapOnErrorEvemtToJson(event))
+        sendEvent(PluginEvents.OnError, data: mappers.mapOnErrorEventToJson(event))
     }
     
     private func removeSocket(_ socket: Socket) {
@@ -101,7 +101,9 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     }
     
     private func error(_ call: CAPPluginCall, _ error: Error) {
-        call.reject(error.localizedDescription)
+        let errorJson = mappers.mapErrorToJson(error)
+        let code = toJsonString(dict: errorJson)
+        call.reject(error.localizedDescription, code)
     }
     
     private func sendEvent(_ event: PluginEvents, data: JSObject) {

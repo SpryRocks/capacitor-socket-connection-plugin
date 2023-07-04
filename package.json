@@ -1,6 +1,6 @@
 {
   "name": "@spryrocks/capacitor-socket-connection-plugin",
-  "version": "0.0.1-alpha.5",
+  "version": "0.0.1",
   "description": "Capacitor Socket Connection Plugin",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -35,6 +35,9 @@
     "lint": "yarn run eslint",
     "build": "npm run clean && tsc && rollup -c rollup.config.js",
     "clean": "rimraf ./dist"
+  },
+  "dependencies": {
+    "@spryrocks/logger-plugin": "^0.0.2-alpha.19"
   },
   "devDependencies": {
     "@capacitor/android": "^4.8.0",

@@ -7,7 +7,7 @@
   resolved "https://registry.yarnpkg.com/@aashutoshrathi/word-wrap/-/word-wrap-1.2.6.tgz#bd9154aec9983f77b3a034ecaa015c2e4201f6cf"
   integrity sha512-1Yjs2SvM8TflER/OD3cOjhWWOZb58A2t7wpE2S9XfBYTiIl+XFhQG2bjy4Pu1I+EAlCNUzRDYDdFwFYUKvXcIA==
 
-"@capacitor/android@^4.8.1":
+"@capacitor/android@^4.8.0":
   version "4.8.1"
   resolved "https://registry.yarnpkg.com/@capacitor/android/-/android-4.8.1.tgz#50223d3f3b35004ce93c185658ec2d11ac2974d3"
   integrity sha512-nOltfBbMyMMukFj8p5FMcHmtw8UF5uyXS8T1P5HKuU/eFrazeDWK+4494Rc9jLhSg/kam5886AJUPZ9UESHCqw==
@@ -127,6 +127,48 @@
     eslint-plugin-import "^2.26.0"
     eslint-plugin-prettier "^4.2.1"
     typescript "^4.7.4"
+
+"@spryrocks/logger-core@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-core/-/logger-core-0.0.1.tgz#a1a38b44b40737c16c69d87cd953daa95c0f664f"
+  integrity sha512-B56qEd2MJ/QTBvV3tEWsN7nqNexseBjLZwfJmiwj2wMm851NWE1J2E/d6J3MGqE1H97yRBRopDjGBYAW4IsEXA==
+
+"@spryrocks/logger-observer@^0.0.2-alpha.13":
+  version "0.0.2-alpha.13"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-observer/-/logger-observer-0.0.2-alpha.13.tgz#d738120ac3391f001b05031bba387e03cb95f103"
+  integrity sha512-WBzsg7aXAVbQS1Qt7Vxwy81zFQxpgHhpHa5mouXaXMphPxa6wq3E5UnWyzSk0IcQ80o5+VXZJVFZpY/CuhBpXw==
+  dependencies:
+    "@spryrocks/logger-core" "^0.0.1"
+
+"@spryrocks/logger-plugin-core@^0.0.2-alpha.14":
+  version "0.0.2-alpha.14"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin-core/-/logger-plugin-core-0.0.2-alpha.14.tgz#b1671fd312a4d77e43dc80a34568638bf69c2cc0"
+  integrity sha512-nDUWqtrUGOQbqGnATKN3rR55VfakqARleSvfjvzTjOB5/Gbe3lklwIMBoW3dZ+0CzE6PpFL/qgQLYmKRQKNd4Q==
+  dependencies:
+    "@spryrocks/logger-core" "^0.0.1"
+
+"@spryrocks/logger-plugin-observer@^0.0.2-alpha.14":
+  version "0.0.2-alpha.14"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin-observer/-/logger-plugin-observer-0.0.2-alpha.14.tgz#a76ec96967d849789c884e3ce2f2cd956cd2a481"
+  integrity sha512-derIYgV2n40KDsb0F3NnkgAHnqd0+oeyxhDiysPzVkPHJ2D87Koybad/1Xl/fW26xgLEYB3cOOsy6kJpuEE6Zg==
+  dependencies:
+    "@spryrocks/logger-observer" "^0.0.2-alpha.13"
+    "@spryrocks/logger-plugin-core" "^0.0.2-alpha.14"
+
+"@spryrocks/logger-plugin@^0.0.2-alpha.19":
+  version "0.0.2-alpha.19"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin/-/logger-plugin-0.0.2-alpha.19.tgz#e476e6903f316fa9e924cd44eb5c7edac8c9a3eb"
+  integrity sha512-yketAELEJL7wN2FCc/hmvjvm2/iU3puCXofYa0BMbhIezEtahJBlgYDehgMP1F1cv+n1tE7vs3xa8KHNIch96g==
+  dependencies:
+    "@spryrocks/logger" "^0.0.2-alpha.19"
+    "@spryrocks/logger-plugin-observer" "^0.0.2-alpha.14"
+
+"@spryrocks/logger@^0.0.2-alpha.19":
+  version "0.0.2-alpha.19"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger/-/logger-0.0.2-alpha.19.tgz#a15abf9ffd5d6079aaeb4276d2237c5efd615456"
+  integrity sha512-vBzk2q0CmIq0pEK26Xj15TNzAVBscf1XUFA1WKn1dbh+sW9I4oiawpkcKdJayBwxRDSBsA8Gimp2GavKprjPdA==
+  dependencies:
+    "@spryrocks/logger-observer" "^0.0.2-alpha.13"
 
 "@spryrocks/prettier-config@^0.2.8-alpha.0":
   version "0.2.8-alpha.0"
@@ -1517,6 +1559,7 @@ slash@^3.0.0:
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0:
+  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -1562,6 +1605,7 @@ string.prototype.trimstart@^1.0.6:
     es-abstract "^1.20.4"
 
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  name strip-ansi-cjs
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-6.0.1.tgz#9e26c63d30f53443e9489495b2105d37b67a85d9"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==

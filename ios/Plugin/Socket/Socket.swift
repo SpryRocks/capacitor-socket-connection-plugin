@@ -1,12 +1,15 @@
 import Network
 
 class Socket {
+    private static let INPUT_STREAM_BUFFER_SIZE = 65536
+    
     public let uuid: SocketUuid
     private let options: SocketOptions
     private var delegate: SocketDelegate
     private let connection: NWConnection
-    private var connectCheckingContinuation: CheckedContinuation<(), Error>? = nil
+    private var openConnectionContinuation: CheckedContinuation<(), Error>? = nil
     private var disconnectCheckingContinuation: CheckedContinuation<(), Error>? = nil
+    private var state: SocketState = SocketState.Initial
     
     init(uuid: SocketUuid, options: SocketOptions, delegate: SocketDelegate) {
         self.uuid = uuid
@@ -16,9 +19,9 @@ class Socket {
         connection.stateUpdateHandler = stateDidChange(to:)
     }
     
-    func connect() async throws {
+    func open() async throws {
         return try await withCheckedThrowingContinuation { continuation in
-            connectCheckingContinuation = continuation
+            openConnectionContinuation = continuation
             setupReceive()
             connection.start(queue: .main)
         }
@@ -27,6 +30,7 @@ class Socket {
     func disconnect() async throws {
         return try await withCheckedThrowingContinuation {continuation in
             disconnectCheckingContinuation = continuation
+            state = .Closed
             connection.cancel()
         }
     }
@@ -44,7 +48,7 @@ class Socket {
     }
     
     private func setupReceive() {
-        connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [self] (data, _, isComplete, error) in
+        connection.receive(minimumIncompleteLength: 1, maximumLength: Socket.INPUT_STREAM_BUFFER_SIZE) { [self] (data, _, isComplete, error) in
             if let data = data, !data.isEmpty {
                 onData(data)
             }
@@ -58,36 +62,76 @@ class Socket {
         }
     }
     
+    private func stateDidChange(to state: NWConnection.State) {
+        switch state {
+        case .preparing:
+            break
+        case .waiting(let error):
+            onError(error)
+            break
+        case .ready:
+            onReady()
+            break
+        case .cancelled:
+            onCancelled()
+            break
+        default:
+            break
+        }
+    }
+    
     private func onData(_ data: Data) {
         let bytes = data.map { $0 }
         delegate.onData(socket: self, data: bytes)
     }
     
     private func onClose() {
+        if (self.state == .Closed) {
+            return
+        }
+        if (self.state == .Error) {
+            return
+        }
         delegate.onClose(socket: self)
+        self.state = .Closed
+        disposeInternal()
+    }
+    
+    private func onReady() {
+        if let continuation = openConnectionContinuation {
+            openConnectionContinuation = nil
+            continuation.resume()
+            self.state = .Opened
+        }
+    }
+    
+    private func onCancelled() {
+        if let continuation = disconnectCheckingContinuation {
+            disconnectCheckingContinuation = nil
+            continuation.resume()
+            onClose()
+        }
     }
     
     private func onError(_ error: Error) {
-        delegate.onError(socket: self, error: error)
+        if (self.state == .Closed) {
+            return
+        }
+        if (self.state == .Error) {
+            return
+        }
+        self.state = .Error
+        if let continuation = openConnectionContinuation {
+            openConnectionContinuation = nil
+            continuation.resume(throwing: error)
+        } else {
+            delegate.onError(socket: self, error: error)
+        }
+        disposeInternal()
     }
     
-    private func stateDidChange(to state: NWConnection.State) {
-        switch state {
-        case .ready:
-            if let continuation = connectCheckingContinuation {
-                connectCheckingContinuation = nil
-                continuation.resume()
-            }
-            break
-        case .cancelled:
-            if let continuation = disconnectCheckingContinuation {
-                disconnectCheckingContinuation = nil
-                continuation.resume()
-            }
-            break;
-        default:
-            break
-        }
+    private func disposeInternal() {
+        connection.cancel()
     }
     
     private static func createConnection(_ options: SocketOptions) -> NWConnection {

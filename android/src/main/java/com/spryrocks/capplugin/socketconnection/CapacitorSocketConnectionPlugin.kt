@@ -9,13 +9,10 @@ import com.spryrocks.capplugin.socketconnection.socket.Socket
 import com.spryrocks.capplugin.socketconnection.socket.SocketDelegate
 import com.spryrocks.capplugin.socketconnection.socket.SocketOptions
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newCoroutineContext
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import kotlin.coroutines.CoroutineContext
 
 @NativePlugin(name = "CapacitorSocketConnectionPlugin")
 class CapacitorSocketConnectionPlugin : Plugin(), CoroutineScope, SocketDelegate {
@@ -42,7 +39,7 @@ class CapacitorSocketConnectionPlugin : Plugin(), CoroutineScope, SocketDelegate
                 )
                 socketsMap[link.uuid] = socket
 
-                socket.connect()
+                socket.open()
 
                 val result = OpenConnectionResult(link = link)
                 success(call, mappers.mapOpenConnectionResultToJson(result))
@@ -63,7 +60,7 @@ class CapacitorSocketConnectionPlugin : Plugin(), CoroutineScope, SocketDelegate
 
                 removeSocket(socket)
 
-                socket.disconnect()
+                socket.close()
 
                 success(call)
             } catch (error: Throwable) {
@@ -126,7 +123,9 @@ class CapacitorSocketConnectionPlugin : Plugin(), CoroutineScope, SocketDelegate
     }
 
     private fun error(call: PluginCall, error: Throwable) {
-        call.reject(error.localizedMessage)
+        val errorJson = mappers.mapErrorToJson(error)
+        val code = errorJson.toString()
+        call.reject(error.localizedMessage, code)
     }
 
     private fun sendEvent(event: PluginEvents, data: JSObject) {

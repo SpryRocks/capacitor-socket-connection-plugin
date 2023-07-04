@@ -67,12 +67,19 @@ class Mappers {
     fun mapOnErrorEventToJson(event: OnErrorEvent): JSObject {
         return JSObject().apply {
             put("socketUuid", event.socketUuid)
+            put("error", mapErrorToJson(event.error))
+        }
+    }
+
+    fun mapErrorToJson(error: Throwable): JSObject {
+        return JSObject().apply {
+            put("message", error.localizedMessage ?: "Unknown error")
         }
     }
 
     private fun mapSocketDataToJson(data: SocketData): JSArray {
         val arr = JSArray()
-        for(i in data.indices) {
+        for (i in data.indices) {
             arr.put(data[i])
         }
         return arr

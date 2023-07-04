@@ -1,7 +1,7 @@
-/* eslint-disable no-console */
 import {
   BaseEvent,
   ByteArray,
+  ErrorObject,
   NativeLink,
   NativePlugin,
   OnCloseEvent,
@@ -16,6 +16,7 @@ import {
   SocketData,
   SocketOptions,
 } from './types';
+import {createLogger} from './logger';
 import {SocketConnectionError} from './error';
 
 type State = 'initial' | 'opening' | 'opened' | 'closing' | 'closed' | 'error';
@@ -35,7 +36,7 @@ export interface ISocket {
 }
 
 export class Socket implements ISocket {
-  private static readonly TAG = 'SocketConnectionPlugin';
+  private readonly logger = createLogger();
 
   onData: OnSocketData | undefined;
 
@@ -52,12 +53,14 @@ export class Socket implements ISocket {
     this.setupListeners();
   }
 
+  //region Actions
   async open(host: string, port: number) {
+    this.logger.debug('Open connection', {host, port});
     this.checkStateOrThrow('initial', `You can call "open" method only once`);
     this.onOpeningInternal();
     let close: boolean;
     try {
-      const {link} = await NativePlugin.openConnection({host, port});
+      const {link} = await this.wrapCall(NativePlugin.openConnection({host, port}));
       close = this.checkState('closing');
       this.onOpenedInternal(link);
     } catch (error) {
@@ -72,72 +75,96 @@ export class Socket implements ISocket {
 
   async write(data: SocketData) {
     this.checkStateOrThrow('opened', `Not supported state: ${this.state}`);
-    return NativePlugin.sendData({link: this.link, data: Array.from(data)});
+    return this.wrapCall(
+      NativePlugin.sendData({link: this.getLinkOrThrow(), data: Array.from(data)}),
+    );
   }
 
+  async close() {
+    if (this.checkState('initial')) {
+      this.logger.debug('Connection closed from initial state');
+      this.onClosedInternal();
+      return;
+    }
+    if (this.checkState('opening')) {
+      this.logger.debug('Connection closing from opening state');
+      this.onClosingInternal();
+      return;
+    }
+
+    await this.closeInternal();
+  }
+  //endregion
+
+  //region Events
   private onDataEventReceived(event: OnDataEvent) {
-    console.log('Socket', 'onDataEventReceived', {event});
     if (!this.checkEventUuid(event)) return;
     this.onDataInternal(event.data);
   }
 
   private onCloseEventReceived(event: OnCloseEvent) {
-    console.log('Socket', 'onCloseEventReceived', {event});
     if (!this.checkEventUuid(event)) return;
+    this.logger.info('onClose event received', {event});
     this.onClosedInternal();
   }
 
   private onErrorEventReceived(event: OnErrorEvent) {
-    console.log('Socket', 'onErrorEventReceived', {event});
     if (!this.checkEventUuid(event)) return;
-    this.onErrorInternal(new SocketConnectionError('Connection error'));
+    this.logger.info('onError event received', {event});
+    this.onErrorInternal(this.createErrorFromObject(event.error));
   }
+  //endregion
 
-  async close() {
-    if (this.checkState('initial')) {
-      this.onClosedInternal();
-      return;
-    }
-    if (this.checkState('opening')) {
-      this.onClosingInternal();
-      return;
-    }
-    if (this.checkState('opened')) {
-      await this.closeInternal();
-      return;
-    }
-  }
-
-  private async closeInternal() {
-    if (this.checkState('opened')) {
-      this.onClosingInternal();
-      await NativePlugin.closeConnection({link: this.link});
-      this.onClosedInternal();
-    }
-  }
-
+  //region State & Helpers
   private get state() {
     return this._state;
   }
 
   private set state(newState: State) {
     const oldState = this._state;
-    console.log(Socket.TAG, 'set state', {oldState, newState});
+    this.logger.info(`Set state: "${newState}"`, {oldState});
     this._state = newState;
   }
 
-  private get link() {
+  private getLink() {
+    return this._link;
+  }
+
+  private getLinkOrThrow() {
     if (!this._link) throw new SocketConnectionError('PluginLink is undefined');
     return this._link;
   }
 
+  private setLink(link: NativeLink) {
+    this._link = link;
+    this.logger.updateParams({link: link.uuid});
+  }
+
+  private checkState(...states: State[]) {
+    return states.includes(this.state);
+  }
+
+  private checkEventUuid(event: BaseEvent) {
+    return event.socketUuid === this.getLink()?.uuid;
+  }
+
+  private checkStateOrThrow(state: State, errorMessage: string) {
+    if (!this.checkState(state)) {
+      this.logger.error(errorMessage);
+      throw new SocketConnectionError(errorMessage);
+    }
+  }
+  //endregion
+
+  //region Internal
   private onOpeningInternal() {
     this.state = 'opening';
   }
 
   private onOpenedInternal(link: NativeLink) {
-    this._link = link;
+    this.setLink(link);
     this.state = 'opened';
+    this.logger.info('Connection opened');
   }
 
   private onDataInternal(bytes: ByteArray) {
@@ -168,16 +195,17 @@ export class Socket implements ISocket {
     if (this.onClose) this.onClose();
   }
 
-  private checkState(...states: State[]) {
-    return states.includes(this.state);
-  }
+  private async closeInternal() {
+    if (this.checkState('opened')) {
+      this.logger.debug('Close connection');
+      this.onClosingInternal();
+      await this.wrapCall(NativePlugin.closeConnection({link: this.getLinkOrThrow()}));
+      this.onClosedInternal();
+      this.logger.info('Connection closed');
+      return;
+    }
 
-  private checkEventUuid(event: BaseEvent) {
-    return event.socketUuid === this.link.uuid;
-  }
-
-  private checkStateOrThrow(state: State, errorMessage: string) {
-    if (!this.checkState(state)) throw new SocketConnectionError(errorMessage);
+    this.logger.info(`Cannot close connection from state "${this.state}"`);
   }
 
   private setupListeners() {
@@ -189,6 +217,38 @@ export class Socket implements ISocket {
     });
     NativePlugin.addListener(PluginEvents.OnError, (data) => {
       this.onErrorEventReceived(data as OnErrorEvent);
+    });
+  }
+  //endregion
+
+  private createErrorFromObject(error: ErrorObject): SocketConnectionError {
+    return new SocketConnectionError(error.message);
+  }
+
+  private processErrorCode(code: string): SocketConnectionError | undefined {
+    try {
+      const errorObject: ErrorObject = JSON.parse(code);
+      return this.createErrorFromObject(errorObject);
+    } catch {
+      return undefined;
+    }
+  }
+
+  private processError(error: {
+    errorMessage: string | undefined;
+    code: string | undefined;
+  }): SocketConnectionError {
+    this.logger.debug('processError', {error});
+    if (error.code) {
+      const processedError = this.processErrorCode(error.code);
+      if (processedError) return processedError;
+    }
+    return new SocketConnectionError(error.errorMessage ?? 'Unknown error');
+  }
+
+  private wrapCall<T>(promise: Promise<T>): Promise<T> {
+    return promise.catch((error) => {
+      throw this.processError(error);
     });
   }
 }

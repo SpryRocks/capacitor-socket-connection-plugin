@@ -31,15 +31,29 @@ public class Mappers {
     }
     
     func mapOnDataEventToJson(_ event: OnDataEvent) -> JSObject {
-        return ["data": event.data, "socketUuid": event.socketUuid]
+        return [
+            "data": event.data,
+            "socketUuid": event.socketUuid,
+        ]
     }
     
     func mapOnCloseEventToJson(_ event: OnCloseEvent) -> JSObject {
-        return ["socketUuid": event.socketUuid]
+        return [
+            "socketUuid": event.socketUuid,
+        ]
     }
     
-    func mapOnErrorEvemtToJson(_ event: OnErrorEvent) -> JSObject {
-        return ["socketUuid": event.socketUuid]
+    func mapOnErrorEventToJson(_ event: OnErrorEvent) -> JSObject {
+        return [
+            "socketUuid": event.socketUuid,
+            "error": mapErrorToJson(event.error),
+        ]
+    }
+    
+    func mapErrorToJson(_ error: Error) -> JSObject {
+        return [
+            "message": error.localizedDescription,
+        ]
     }
     
     private func mapSocketDataFromJsArray(_ data: JSArray) -> SocketData {
