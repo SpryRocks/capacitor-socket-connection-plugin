@@ -39,17 +39,15 @@
   "dependencies": {
     "@spryrocks/logger-plugin": "^0.1.0"
   },
+  "peerDependencies": {
+    "@capacitor/core": "^2.4.7"
+  },
   "devDependencies": {
-    "@capacitor/android": "^4.8.0",
-    "@capacitor/core": "^4.8.0",
-    "@capacitor/ios": "^4.8.0",
+    "@capacitor/core": "^2.4.7",
     "rimraf": "^5.0.1",
     "rollup": "^3.26.0",
     "typescript": "^5.1.6",
     "@spryrocks/eslint-config": "^0.2.8-alpha.0"
-  },
-  "peerDependencies": {
-    "@capacitor/core": "^4.8.0"
   },
   "capacitor": {
     "ios": {

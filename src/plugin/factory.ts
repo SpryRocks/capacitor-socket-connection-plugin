@@ -1,5 +1,5 @@
 import type {CapPlugin, ICapacitorSocketConnectionDefinitions} from './definitions';
-import {registerPlugin} from '@capacitor/core';
+import {Plugins} from '@capacitor/core';
 
 const pluginName = 'CapacitorSocketConnectionPlugin';
 
@@ -13,9 +13,9 @@ export type CreatePlugin = <TPlugin>(
 
 export const createPlugin: CreatePlugin = <TPlugin>(
   pluginName: string,
-  options?: {web?: PluginRegistration},
+  _?: {web?: PluginRegistration},
 ): TPlugin => {
-  return registerPlugin<TPlugin>(pluginName, {web: options?.web});
+  return Plugins[pluginName] as TPlugin;
 };
 
 const plugin = createPlugin<ICapacitorSocketConnectionDefinitions & CapPlugin>(
