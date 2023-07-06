@@ -1,0 +1,62 @@
+{
+  "name": "@spryrocks/capacitor-socket-connection-plugin",
+  "version": "0.1.0",
+  "description": "Capacitor Socket Connection Plugin",
+  "main": "dist/plugin.cjs.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "unpkg": "dist/plugin.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "android/src/main/",
+    "android/build.gradle",
+    "dist/",
+    "ios/Plugin/",
+    "SpryrocksCapacitorSocketConnectionPlugin.podspec"
+  ],
+  "author": "Maxim Zhemerenko",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpryRocks/capacitor-socket-connection-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SpryRocks/capacitor-socket-connection-plugin/issues"
+  },
+  "keywords": [
+    "capacitor",
+    "plugin",
+    "native"
+  ],
+  "scripts": {
+    "lint": "yarn run eslint",
+    "build": "npm run clean && tsc && rollup -c rollup.config.js",
+    "clean": "rimraf ./dist"
+  },
+  "dependencies": {
+    "@spryrocks/logger-plugin": "^0.1.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^4.8.0",
+    "@capacitor/core": "^4.8.0",
+    "@capacitor/ios": "^4.8.0",
+    "rimraf": "^5.0.1",
+    "rollup": "^3.26.0",
+    "typescript": "^5.1.6",
+    "@spryrocks/eslint-config": "^0.2.8-alpha.0"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^4.8.0"
+  },
+  "capacitor": {
+    "ios": {
+      "src": "ios"
+    },
+    "android": {
+      "src": "android"
+    }
+  }
+}
