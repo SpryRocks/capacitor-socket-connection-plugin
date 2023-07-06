@@ -3,7 +3,20 @@ import {registerPlugin} from '@capacitor/core';
 
 const pluginName = 'CapacitorSocketConnectionPlugin';
 
-const createPlugin = <T>(pluginName: string) => registerPlugin<T>(pluginName);
+export type PluginImplementation = unknown;
+export type PluginRegistration = () => PluginImplementation;
+
+export type CreatePlugin = <TPlugin>(
+  pluginName: string,
+  options?: {web?: PluginRegistration},
+) => TPlugin;
+
+export const createPlugin: CreatePlugin = <TPlugin>(
+  pluginName: string,
+  options?: {web?: PluginRegistration},
+): TPlugin => {
+  return registerPlugin<TPlugin>(pluginName, {web: options?.web});
+};
 
 const plugin = createPlugin<ICapacitorSocketConnectionDefinitions & CapPlugin>(
   pluginName,
