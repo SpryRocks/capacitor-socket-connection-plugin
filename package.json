@@ -1,6 +1,6 @@
 {
   "name": "@spryrocks/capacitor-socket-connection-plugin",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Capacitor Socket Connection Plugin",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -39,15 +39,15 @@
   "dependencies": {
     "@spryrocks/logger-plugin": "^0.1.0"
   },
-  "peerDependencies": {
-    "@capacitor/core": "^2.4.7"
-  },
   "devDependencies": {
     "@capacitor/core": "^2.4.7",
     "rimraf": "^5.0.1",
     "rollup": "^3.26.0",
     "typescript": "^5.1.6",
     "@spryrocks/eslint-config": "^0.2.8-alpha.0"
+  },
+  "peerDependencies": {
+    "@capacitor/core": "^2.4.7"
   },
   "capacitor": {
     "ios": {
