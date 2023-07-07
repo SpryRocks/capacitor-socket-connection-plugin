@@ -180,6 +180,7 @@ export class Socket implements ISocket {
       this.onClosedInternal();
       return;
     }
+    this.logger.error(error);
     this.state = 'error';
     if (this.onError) this.onError(error);
   }
@@ -238,7 +239,6 @@ export class Socket implements ISocket {
     errorMessage: string | undefined;
     code: string | undefined;
   }): SocketConnectionError {
-    this.logger.debug('processError', {error});
     if (error.code) {
       const processedError = this.processErrorCode(error.code);
       if (processedError) return processedError;
