@@ -75,6 +75,9 @@ class Socket {
         case .cancelled:
             onCancelled()
             break
+        case .failed(let error):
+            onError(error)
+            break
         default:
             break
         }
@@ -137,6 +140,15 @@ class Socket {
     private static func createConnection(_ options: SocketOptions) -> NWConnection {
         let host = NWEndpoint.Host(options.host)
         let port = NWEndpoint.Port(rawValue: UInt16(options.port))!
-        return NWConnection(host: host, port: port, using: .tcp)
+        
+        let tcpOptions = NWProtocolTCP.Options.init()
+        
+        tcpOptions.enableKeepalive = true
+        tcpOptions.keepaliveIdle = 2
+        tcpOptions.keepaliveInterval = 2
+        
+        let params = NWParameters.init(tls: nil, tcp: tcpOptions)
+        
+        return NWConnection(host: host, port: port, using: params)
     }
 }
