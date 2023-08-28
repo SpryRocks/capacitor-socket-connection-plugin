@@ -34,6 +34,10 @@ android {
     lintOptions {
         abortOnError false
     }
+    compileOptions {
+        sourceCompatibility = javaSourceCompatibility
+        targetCompatibility = javaTargetCompatibility
+    }
 }
 
 repositories {
@@ -44,5 +48,5 @@ repositories {
 dependencies {
     implementation project(':capacitor-android')
     implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutines"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion"
 }
