@@ -1,6 +1,6 @@
 {
   "name": "@spryrocks/capacitor-socket-connection-plugin",
-  "version": "2.1.3",
+  "version": "2.1.4-alpha.3",
   "description": "Capacitor Socket Connection Plugin",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -18,7 +18,6 @@
   ],
   "author": "Maxim Zhemerenko",
   "license": "MIT",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SpryRocks/capacitor-socket-connection-plugin.git"
@@ -33,7 +32,7 @@
   ],
   "scripts": {
     "lint": "yarn run eslint",
-    "build": "npm run clean && tsc && rollup -c rollup.config.js",
+    "build": "npm run clean && tsc && rollup -c rollup.config.mjs",
     "clean": "rimraf ./dist"
   },
   "dependencies": {
@@ -42,7 +41,7 @@
   "devDependencies": {
     "@capacitor/core": "^2.4.7",
     "rimraf": "^5.0.1",
-    "rollup": "^3.26.0",
+    "rollup": "^3.28.1",
     "typescript": "^5.1.6",
     "@spryrocks/eslint-config": "^0.2.8-alpha.0"
   },
