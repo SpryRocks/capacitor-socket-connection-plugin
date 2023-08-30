@@ -1,6 +1,6 @@
 {
   "name": "@spryrocks/capacitor-socket-connection-plugin",
-  "version": "4.1.4-alpha.2",
+  "version": "4.1.5-alpha.0",
   "description": "Capacitor Socket Connection Plugin",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
@@ -36,7 +36,7 @@
     "clean": "rimraf ./dist"
   },
   "dependencies": {
-    "@spryrocks/logger-plugin": "^0.1.1"
+    "@spryrocks/logger-plugin": "^0.1.15-alpha.1"
   },
   "devDependencies": {
     "@capacitor/core": "^4.8.0",
