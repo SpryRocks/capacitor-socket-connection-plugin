@@ -118,47 +118,47 @@
     eslint-plugin-prettier "^4.2.1"
     typescript "^4.7.4"
 
-"@spryrocks/logger-core@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@spryrocks/logger-core/-/logger-core-0.1.1.tgz#cd6a6c21f22118fe032ec52860d1f210feb625fe"
-  integrity sha512-e11pJmeiW7GuKAUx65QW5evcEEZ9jTDVAPnR3TYLRWpPndHLbYYIf312A89R9f8Jhl++ToJGb3x0334R/v0/Mg==
+"@spryrocks/logger-core@^0.1.15-alpha.0":
+  version "0.1.15-alpha.0"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-core/-/logger-core-0.1.15-alpha.0.tgz#c8c8f8f802ace92683e930b2918587bd30bb61ba"
+  integrity sha512-B+MfnTVMg8XsShJOLnXhJvmSc5/26tHRDyUvzfuw4MsAS4ME8vZuU/+tcyG/m+H8PbRDv5CE9Qmg0dwUFlk4EQ==
 
-"@spryrocks/logger-observer@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@spryrocks/logger-observer/-/logger-observer-0.1.1.tgz#25f566cf1208d82a57c834ca7ef884e3978ad43b"
-  integrity sha512-nSZ/ialcb7GrN2bG+hgTXGda8uhETYemHDuFgpGmnMeDzkDNCxibN8Exg9RUWuyMtTL16bcz87MxOV7r5Sca6A==
+"@spryrocks/logger-observer@^0.1.15-alpha.0":
+  version "0.1.15-alpha.0"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-observer/-/logger-observer-0.1.15-alpha.0.tgz#9b406ef3e187a728fa867ffb770c39f32316c3d8"
+  integrity sha512-fz6Ls4KZRL2ZasrnTY8223R7KIjZ7pyy8W9HduwdY1jprgg13+qvGe52GFHDionA6pYeaYc8J1/rZ5wjYrvvUA==
   dependencies:
-    "@spryrocks/logger-core" "^0.1.1"
+    "@spryrocks/logger-core" "^0.1.15-alpha.0"
 
-"@spryrocks/logger-plugin-core@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin-core/-/logger-plugin-core-0.1.1.tgz#bd715f209ba91c583554f7eea400b9c5262e6a45"
-  integrity sha512-rSz1mIU5jzteAEioFZ7gTEjRBsRrPLLgSgLeG6fxdGob6n8wQ5o02GrOi62gZwSNV0/3s3hNPX7h/MFnq7FhOA==
+"@spryrocks/logger-plugin-core@^0.1.15-alpha.0":
+  version "0.1.15-alpha.0"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin-core/-/logger-plugin-core-0.1.15-alpha.0.tgz#e42f202dd57bb4d1627bfed514da8d6aa69244d5"
+  integrity sha512-iRmip/fa+V/IWxr2H3yHcg4YJmoRUOgqUv0Qvol7dcDK21pF9NasFJVJrMRXoGqhv3S6CI/AHRIhNx1idQ9lSw==
   dependencies:
-    "@spryrocks/logger-core" "^0.1.1"
+    "@spryrocks/logger-core" "^0.1.15-alpha.0"
 
-"@spryrocks/logger-plugin-observer@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin-observer/-/logger-plugin-observer-0.1.1.tgz#4e1e466882795a65b05f9fee9b72f4417e41dbb8"
-  integrity sha512-duMCd3g8hPQhJjfoE4geJQRxwU4l1GBl4LbgdN0hFVTovAuW92g2OP07U0hG1pwh7x2X5oafmiGtUUGdfJGR+g==
+"@spryrocks/logger-plugin-observer@^0.1.15-alpha.0":
+  version "0.1.15-alpha.0"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin-observer/-/logger-plugin-observer-0.1.15-alpha.0.tgz#06ffa53a7f2b2660cae018970abdd87f8dcd395c"
+  integrity sha512-H5qaNFbSWHL8Lpkf57wGisYlpQ+Wj548vG/Evb47xK9xASVlqctc5PLmCQu1iCoonmzsxMPUv80CX/KcrMciKw==
   dependencies:
-    "@spryrocks/logger-observer" "^0.1.1"
-    "@spryrocks/logger-plugin-core" "^0.1.1"
+    "@spryrocks/logger-observer" "^0.1.15-alpha.0"
+    "@spryrocks/logger-plugin-core" "^0.1.15-alpha.0"
 
-"@spryrocks/logger-plugin@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin/-/logger-plugin-0.1.1.tgz#981047a45f4ae1332f557e81aa6682810a9f2a08"
-  integrity sha512-XC/vYpqW/dOrmL8UEByv2g5X4oa/itpanXey88uoflEVIYFWCog0oMrfADgl6b/Ox+UgACHaB4KOo/15z1IN8A==
+"@spryrocks/logger-plugin@^0.1.15-alpha.1":
+  version "0.1.15-alpha.1"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger-plugin/-/logger-plugin-0.1.15-alpha.1.tgz#dd03b5b85642e24b6f85ed55e0b6b984ab384a39"
+  integrity sha512-hUzBeJel8zLmN4q7wldq7Wlj804ljpA98juop53EhyYn99c756CAIfdim7nSyXMBlGGltb7wf8p+S413QYkSQg==
   dependencies:
-    "@spryrocks/logger" "^0.1.1"
-    "@spryrocks/logger-plugin-observer" "^0.1.1"
+    "@spryrocks/logger" "^0.1.15-alpha.1"
+    "@spryrocks/logger-plugin-observer" "^0.1.15-alpha.0"
 
-"@spryrocks/logger@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@spryrocks/logger/-/logger-0.1.1.tgz#0e3336b10e37efe9f4f965202605c21e23e33933"
-  integrity sha512-zvWqxTBDtXHGCfDrdYsMs8fJRQvly+Q7U0P/LQqUC/YWGW/JlsjRuug8Xips+djftcaIQNDMfeFRTzd4VL4YeQ==
+"@spryrocks/logger@^0.1.15-alpha.1":
+  version "0.1.15-alpha.1"
+  resolved "https://registry.yarnpkg.com/@spryrocks/logger/-/logger-0.1.15-alpha.1.tgz#66e80ee4283fcf96aca7285cb23ac26881bf739d"
+  integrity sha512-2iWn8cX3P7veezkkaro/IDUKYf/q3KRp/nBdnkpcR8y+VXxLsNRhptq2BY1LVXJhpoXbEE1kRbTy/5dJ0Uq7jA==
   dependencies:
-    "@spryrocks/logger-observer" "^0.1.1"
+    "@spryrocks/logger-observer" "^0.1.15-alpha.0"
 
 "@spryrocks/prettier-config@^0.2.8-alpha.0":
   version "0.2.8-alpha.0"
