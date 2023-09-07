@@ -17,6 +17,7 @@ import {
   SocketOptions,
 } from './types';
 import {createLogger} from './logger';
+import {ErrorLevel} from '@spryrocks/logger-plugin';
 import {SocketConnectionError} from './error';
 
 type State = 'initial' | 'opening' | 'opened' | 'closing' | 'closed' | 'error';
@@ -150,7 +151,7 @@ export class Socket implements ISocket {
 
   private checkStateOrThrow(state: State, errorMessage: string) {
     if (!this.checkState(state)) {
-      this.logger.error(errorMessage);
+      this.logger.error(undefined, errorMessage, {level: ErrorLevel.Low});
       throw new SocketConnectionError(errorMessage);
     }
   }
@@ -180,7 +181,7 @@ export class Socket implements ISocket {
       this.onClosedInternal();
       return;
     }
-    this.logger.error(error);
+    this.logger.error(error, undefined, {level: ErrorLevel.Medium});
     this.state = 'error';
     if (this.onError) this.onError(error);
   }
