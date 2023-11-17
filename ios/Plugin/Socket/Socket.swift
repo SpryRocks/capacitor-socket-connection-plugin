@@ -10,12 +10,12 @@ class Socket {
     private var openConnectionContinuation: CheckedContinuation<(), Error>? = nil
     private var disconnectCheckingContinuation: CheckedContinuation<(), Error>? = nil
     private var state: SocketState = SocketState.Initial
-    
-    init(uuid: SocketUuid, options: SocketOptions, delegate: SocketDelegate) {
+
+    init(uuid: SocketUuid, options: SocketOptions, delegate: SocketDelegate) throws {
         self.uuid = uuid
         self.options = options
         self.delegate = delegate
-        self.connection = Socket.createConnection(options)
+        self.connection = try Socket.createConnection(options)
         connection.stateUpdateHandler = stateDidChange(to:)
     }
     
@@ -136,11 +136,13 @@ class Socket {
     private func disposeInternal() {
         connection.cancel()
     }
-    
-    private static func createConnection(_ options: SocketOptions) -> NWConnection {
+
+    private static func createConnection(_ options: SocketOptions) throws -> NWConnection {
         let host = NWEndpoint.Host(options.host)
-        let port = NWEndpoint.Port(rawValue: UInt16(options.port))!
-        
+        guard let port = NWEndpoint.Port(rawValue: UInt16(options.port)) else {
+            throw SocketError("Cannot create tcp port")
+        }
+
         let tcpOptions = NWProtocolTCP.Options.init()
         
         tcpOptions.enableKeepalive = true

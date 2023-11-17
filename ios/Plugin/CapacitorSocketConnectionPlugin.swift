@@ -11,12 +11,12 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     func openConnection(_ call: CAPPluginCall) {
         Task {
             do {
-                let options = mappers.mapOpenConnectionOptionsFromCall(call)
+                let options = try mappers.mapOpenConnectionOptionsFromCall(call)
                 let link = NativeLink.generate()
                 
                 let socketOptions = SocketOptions(host: options.host, port: options.port)
                 
-                let socket = Socket(uuid: link.uuid, options: socketOptions, delegate: self)
+                let socket = try Socket(uuid: link.uuid, options: socketOptions, delegate: self)
                 socketsMap[link.uuid] = socket
                 
                 try await socket.open()
@@ -33,7 +33,7 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     func closeConnection(_ call: CAPPluginCall) {
         Task {
             do {
-                let options = mappers.mapCloseConnectionOptionsFromCall(call)
+                let options = try mappers.mapCloseConnectionOptionsFromCall(call)
                 let link = options.link
                 
                 let socket = try findSocketByLink(link)
@@ -53,7 +53,7 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     func sendData(_ call: CAPPluginCall) {
         Task {
             do {
-                let options = mappers.mapSendDataOptionsFromCall(call)
+                let options = try mappers.mapSendDataOptionsFromCall(call)
                 let link = options.link
                 let data = options.data
                 
@@ -91,7 +91,7 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     
     private func findSocketByLink(_ link: NativeLink) throws -> Socket {
         guard let found = socketsMap.first(where: { s in s.key == link.uuid }) else {
-            throw PluginError("Cannot find socket with provided uuid")
+            throw SocketError("Cannot find socket with provided uuid")
         }
         return found.value
     }
@@ -102,7 +102,7 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     
     private func error(_ call: CAPPluginCall, _ error: Error) {
         let errorJson = mappers.mapErrorToJson(error)
-        let code = toJsonString(dict: errorJson)
+        let code = try? toJsonString(dict: errorJson)
         call.reject(error.localizedDescription, code)
     }
     
