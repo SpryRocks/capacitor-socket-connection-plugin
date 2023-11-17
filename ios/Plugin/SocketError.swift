@@ -1,4 +1,4 @@
-class PluginError : Error {
+class SocketError : Error {
     init(_ message: String) {
     }
 }
