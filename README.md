@@ -5,33 +5,84 @@ Capacitor Socket Connection Plugin
 ## Install
 
 ```bash
-npm install @spryrocks/capacitor-socket-connection-plugin
-npx cap sync
+npm install @spryrocks/capacitor-socket-connection-plugin@2.1.7
 ```
 
-## API
+see [main-capacitor5](https://github.com/SpryRocks/capacitor-socket-connection-plugin/tree/main) branch for capacitor 5
 
-<docgen-index>
+## Usage
 
-* [`echo(...)`](#echo)
-
-</docgen-index>
-
-<docgen-api>
-<!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
-
-### echo(...)
+### Create instance of socket connection class
 
 ```typescript
-echo(options: { value: string; }) => Promise<{ value: string; }>
+const socket = new Socket();
 ```
 
-| Param         | Type                            |
-| ------------- | ------------------------------- |
-| **`options`** | <code>{ value: string; }</code> |
+### Bind to events
 
-**Returns:** <code>Promise&lt;{ value: string; }&gt;</code>
+#### onData
 
---------------------
+```typescript
+socket.onData = function(data) {
+  // handle received data
+};
+```
 
-</docgen-api>
+##### Callback function parameters
+
+| Name | Type       |
+|------|------------|
+| data | Uint8Array |
+
+#### onClose
+
+```typescript
+socket.onClose = function() {
+    // handle socket close
+};
+```
+
+#### onError
+
+```typescript
+socket.onError = function(error) {
+    // handle socket error
+};
+```
+
+##### Callback function parameters
+
+| Name  | Type    |
+|-------|---------|
+| error | unknown |
+
+### Connect socket to endpoint
+
+```typescript
+await socket.open(host, port);
+```
+
+#### Parameters
+
+| Name | Type   |
+|------|--------|
+| host | String |
+| port | Number |
+
+### Write data to socket
+
+```typescript
+await socket.write(data);
+```
+
+#### Parameters
+
+| Name | Type       |
+|------|------------|
+| data | Uint8Array |
+
+### Close socket connection
+
+```typescript
+await socket.close();
+```
