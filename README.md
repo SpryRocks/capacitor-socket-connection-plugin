@@ -5,7 +5,7 @@ Capacitor Socket Connection Plugin
 ## Install
 
 ```bash
-npm install @spryrocks/capacitor-socket-connection-plugin@2.1.7
+npm install @spryrocks/capacitor-socket-connection-plugin@2.1.9
 ```
 
 see [main-capacitor5](https://github.com/SpryRocks/capacitor-socket-connection-plugin/tree/main) branch for capacitor 5
