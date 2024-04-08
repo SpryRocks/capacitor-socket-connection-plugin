@@ -86,3 +86,9 @@ await socket.write(data);
 ```typescript
 await socket.close();
 ```
+
+## Q&A
+
+Q: When I call the open method after being disconnected, I will be prompted that the open method can only be called once. How should I reconnect?
+
+A: To re-connect the socket you should create the new one and open it.
