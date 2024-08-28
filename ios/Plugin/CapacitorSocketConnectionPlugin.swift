@@ -9,43 +9,39 @@ public class CapacitorSocketConnectionPluginPlugin: CAPPlugin, SocketDelegate {
     
     @objc
     func openConnection(_ call: CAPPluginCall) {
-        Task {
-            do {
-                let options = try mappers.mapOpenConnectionOptionsFromCall(call)
-                let link = NativeLink.generate()
-                
-                let socketOptions = SocketOptions(host: options.host, port: options.port)
-                
-                let socket = try Socket(uuid: link.uuid, options: socketOptions, delegate: self)
-                socketsMap[link.uuid] = socket
-                
-                try await socket.open()
-                
-                let result = OpenConnectionResult(link: link)
-                self.success(call, mappers.mapConnectionResultToJson(result))
-            } catch {
-                self.error(call, error)
-            }
+        do {
+            let options = try mappers.mapOpenConnectionOptionsFromCall(call)
+            let link = NativeLink.generate()
+            
+            let socketOptions = SocketOptions(host: options.host, port: options.port)
+            
+            let socket = try Socket(uuid: link.uuid, options: socketOptions, delegate: self)
+            socketsMap[link.uuid] = socket
+            
+            try await socket.open()
+            
+            let result = OpenConnectionResult(link: link)
+            self.success(call, mappers.mapConnectionResultToJson(result))
+        } catch {
+            self.error(call, error)
         }
     }
     
     @objc
     func closeConnection(_ call: CAPPluginCall) {
-        Task {
-            do {
-                let options = try mappers.mapCloseConnectionOptionsFromCall(call)
-                let link = options.link
-                
-                let socket = try findSocketByLink(link)
-                
-                removeSocket(socket)
-                
-                try await socket.disconnect()
-                
-                self.success(call)
-            } catch {
-                self.error(call, error)
-            }
+        do {
+            let options = try mappers.mapCloseConnectionOptionsFromCall(call)
+            let link = options.link
+            
+            let socket = try findSocketByLink(link)
+            
+            removeSocket(socket)
+            
+            try await socket.disconnect()
+            
+            self.success(call)
+        } catch {
+            self.error(call, error)
         }
     }
     
