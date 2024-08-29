@@ -56,6 +56,19 @@ socket.onError = function(error) {
 |-------|---------|
 | error | unknown |
 
+#### onStateChanges
+```typescript
+socket.onStateChanged = function(state) {
+    // handle socket state change
+};
+```
+
+##### Callback function parameters
+
+| Name  | Type         |
+|-------|--------------|
+| state | SocketState  |
+ 
 ### Connect socket to endpoint
 
 ```typescript
@@ -87,8 +100,14 @@ await socket.write(data);
 await socket.close();
 ```
 
+### Get current state
+
+```typescript
+const state = socket.state;
+```
+
 ## Q&A
 
 Q: When I call the open method after being disconnected, I will be prompted that the open method can only be called once. How should I reconnect?
 
-A: To re-connect the socket you should create the new one and open it.
+A: To re-connect the socket you should create the new socket and then open it.

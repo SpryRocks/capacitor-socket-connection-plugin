@@ -13,14 +13,14 @@ import {
   OnSocketClose,
   OnSocketData,
   OnSocketError,
+  OnStateChanged,
   SocketData,
   SocketOptions,
+  SocketState as State,
 } from './types';
 import {createLogger} from './logger';
 import {ErrorLevel} from '@spryrocks/logger-plugin';
 import {SocketConnectionError} from './error';
-
-type State = 'initial' | 'opening' | 'opened' | 'closing' | 'closed' | 'error';
 
 export interface ISocket {
   onData: OnSocketData | undefined;
@@ -29,15 +29,21 @@ export interface ISocket {
 
   onError: OnSocketError | undefined;
 
+  onStateChanged: OnStateChanged | undefined;
+
   open(host: string, port: number): Promise<void>;
 
   write(data: SocketData): Promise<void>;
 
   close(): Promise<void>;
+
+  get state(): State;
 }
 
 export class Socket implements ISocket {
   private readonly logger = createLogger();
+
+  onStateChanged: OnStateChanged | undefined;
 
   onData: OnSocketData | undefined;
 
@@ -117,7 +123,7 @@ export class Socket implements ISocket {
   //endregion
 
   //region State & Helpers
-  private get state() {
+  get state() {
     return this._state;
   }
 
@@ -125,6 +131,7 @@ export class Socket implements ISocket {
     const oldState = this._state;
     this.logger.info(`Set state: "${newState}"`, {oldState});
     this._state = newState;
+    this.onStateChanged?.(newState);
   }
 
   private getLink() {
@@ -171,7 +178,7 @@ export class Socket implements ISocket {
   private onDataInternal(bytes: ByteArray) {
     if (!this.checkState('opened')) return;
     const data = new Uint8Array(bytes);
-    if (this.onData) this.onData(data);
+    this.onData?.(data);
   }
 
   private onErrorInternal(error: unknown) {
@@ -183,7 +190,7 @@ export class Socket implements ISocket {
     }
     this.logger.error(error, undefined, {level: ErrorLevel.Medium});
     this.state = 'error';
-    if (this.onError) this.onError(error);
+    this.onError?.(error);
   }
 
   private onClosingInternal() {
@@ -194,7 +201,7 @@ export class Socket implements ISocket {
     if (this.checkState('closed')) return;
     if (this.checkState('error')) return;
     this.state = 'closed';
-    if (this.onClose) this.onClose();
+    this.onClose?.();
   }
 
   private async closeInternal() {
