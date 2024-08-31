@@ -1,4 +1,4 @@
-import {Plugin, registerPlugin} from './core';
+import {Plugin, registerPlugin} from './core/index';
 import type {ICapacitorSocketConnectionDefinitions} from './definitions';
 
 const pluginName = 'CapacitorSocketConnectionPlugin';

@@ -1,6 +1,6 @@
 {
   "name": "@spryrocks/capacitor-socket-connection-plugin",
-  "version": "6.3.0-alpha.2",
+  "version": "6.3.0-alpha.3",
   "description": "Capacitor Socket Connection Plugin",
   "main": "dist/plugin.cjs.js",
   "module": "dist/esm/index.js",
