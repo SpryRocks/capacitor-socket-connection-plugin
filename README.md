@@ -119,3 +119,8 @@ const state = socket.state;
 Q: When I call the open method after being disconnected, I will be prompted that the open method can only be called once. How should I reconnect?
 
 A: To re-connect the socket you should create the new socket and then open it.
+
+## Contributors
+
+* Thanks [@JEreth](https://github.com/JEreth) for fix gradle config by adding missing settings and dependencies [#22](https://github.com/SpryRocks/capacitor-socket-connection-plugin/pull/22)
+* Thanks [@dreadnought](https://github.com/dreadnought) for update the plugin to Capacitor 6 [#28](https://github.com/SpryRocks/capacitor-socket-connection-plugin/pull/28)
