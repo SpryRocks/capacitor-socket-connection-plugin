@@ -1,6 +1,18 @@
-import {Plugin as CapPlugin} from '@capacitor/core';
-import {registerPlugin as capRegisterPlugin} from '@capacitor/core';
+import {Plugin, registerPlugin} from '@capacitor/core';
 
-export type Plugin = CapPlugin;
+type PluginImplementation = unknown;
+type PluginRegistration = () => PluginImplementation;
 
-export const registerPlugin = capRegisterPlugin;
+type CreatePlugin = <TPlugin>(
+  pluginName: string,
+  options?: {web?: PluginRegistration},
+) => TPlugin;
+
+export const createPlugin: CreatePlugin = <TPlugin>(
+  pluginName: string,
+  options?: {web?: PluginRegistration},
+): TPlugin => {
+  return registerPlugin<TPlugin>(pluginName, {web: options?.web});
+};
+
+export {Plugin};
