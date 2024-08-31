@@ -1,5 +1,5 @@
-import type {CapPlugin, ICapacitorSocketConnectionDefinitions} from './definitions';
-import {registerPlugin} from '@capacitor/core';
+import {Plugin, registerPlugin} from './core';
+import type {ICapacitorSocketConnectionDefinitions} from './definitions';
 
 const pluginName = 'CapacitorSocketConnectionPlugin';
 
@@ -18,8 +18,6 @@ export const createPlugin: CreatePlugin = <TPlugin>(
   return registerPlugin<TPlugin>(pluginName, {web: options?.web});
 };
 
-const plugin = createPlugin<ICapacitorSocketConnectionDefinitions & CapPlugin>(
-  pluginName,
-);
+const plugin = createPlugin<ICapacitorSocketConnectionDefinitions & Plugin>(pluginName);
 
 export {plugin as NativePlugin};
