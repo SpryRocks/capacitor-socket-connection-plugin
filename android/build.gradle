@@ -42,8 +42,8 @@ android {
         abortOnError false
     }
     compileOptions {
-        sourceCompatibility rootProject.hasProperty('javaSourceCompatibility') ? rootProject.ext.javaSourceCompatibility : JavaVersion.VERSION_17
-        targetCompatibility rootProject.hasProperty('javaTargetCompatibility') ? rootProject.ext.javaSourceCompatibility : JavaVersion.VERSION_17
+        sourceCompatibility rootProject.hasProperty('javaSourceCompatibility') ? rootProject.ext.javaSourceCompatibility : JavaVersion.VERSION_21
+        targetCompatibility rootProject.hasProperty('javaTargetCompatibility') ? rootProject.ext.javaSourceCompatibility : JavaVersion.VERSION_21
     }
 }
 
