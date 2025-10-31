@@ -124,3 +124,4 @@ A: To re-connect the socket you should create the new socket and then open it.
 
 * Thanks [@JEreth](https://github.com/JEreth) for fix gradle config by adding missing settings and dependencies [#22](https://github.com/SpryRocks/capacitor-socket-connection-plugin/pull/22)
 * Thanks [@dreadnought](https://github.com/dreadnought) for update the plugin to Capacitor 6 [#28](https://github.com/SpryRocks/capacitor-socket-connection-plugin/pull/28)
+* Thanks [@daanvanhulst](https://github.com/daanvanhulst) for updating the plugin to Capacitor 7 [#43]
